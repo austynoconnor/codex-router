@@ -9708,9 +9708,9 @@ function curatedMuseCompatibilityModel() {
   const dir = mkdtempSync(path.join(os.tmpdir(), "routing-opencode-tool-model-"));
   const file = path.join(dir, "user-models.json");
   const muse = {
-    slug: "opencode-free-responses/muse-spark-1.2-contributor-free",
-    gatewayModel: "opencode-free-responses-muse-spark-1-2-contributor-free",
-    upstreamModel: "muse-spark-1.2-contributor-free",
+    slug: "opencode-free-responses/muse-spark-1.3-contributor-free",
+    gatewayModel: "opencode-free-responses-muse-spark-1-3-contributor-free",
+    upstreamModel: "muse-spark-1.3-contributor-free",
     provider: "opencode-free-responses",
   };
   writeFileSync(

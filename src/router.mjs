@@ -863,15 +863,20 @@ function assertRoutedSearchContract(route, builtSearchMode, contract) {
   throw unsupportedSearchContractError(route?.slug);
 }
 
-// The documented Zen Free pair has two different wire contracts: Ox uses Chat
-// Completions and Muse Contributor Free uses Responses. Their observed strict
-// tool/input limitations do not establish a contract for paid Zen, Go, or any
-// other free model, so keep this compatibility boundary exact.
+// The documented Zen Free routes have two different wire contracts: Ox uses
+// Chat Completions and Muse Contributor Free uses Responses. Their observed
+// strict tool/input limitations do not establish a contract for paid Zen, Go,
+// or any other free model, so keep this compatibility boundary exact.
+const ZEN_FREE_MUSE_MODELS = new Set([
+  "muse-spark-1.2-contributor-free",
+  "muse-spark-1.3-contributor-free",
+]);
+
 function needsZenFreeToolCompatibility(route) {
   const providerId = providerForModel(route)?.id;
   return (
-    (providerId === "opencode-free-responses" &&
-      route.upstreamModel === "muse-spark-1.2-contributor-free")
+    providerId === "opencode-free-responses" &&
+    ZEN_FREE_MUSE_MODELS.has(route.upstreamModel)
   );
 }
 

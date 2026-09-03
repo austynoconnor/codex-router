@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- **Muse Spark 1.3 Free now receives the OpenCode search-tool repair.**
+  OpenCode rejects Codex's `search_content_types` field on the `web_search`
+  tool shape, while accepting it on the legacy `web_search_preview` shape.
+  The measured Muse compatibility gate now covers both 1.2 and 1.3, stripping
+  only that unsupported field on `web_search` and preserving the valid preview
+  form. Updated 2026-09-03 13:15 America/Chicago by GPT-5.6.
+
 - **OpenCode Free now includes Muse Spark 1.3.** Added the current
   `muse-spark-1.3-contributor-free` model to the anonymous OpenCode Zen
   Responses route, with its published 1,048,576-token context window,
