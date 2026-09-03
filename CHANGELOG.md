@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+- **OpenCode Free now includes Muse Spark 1.3.** Added the current
+  `muse-spark-1.3-contributor-free` model to the anonymous OpenCode Zen
+  Responses route, with its published 1,048,576-token context window,
+  131,072-token output limit, and minimal/low/medium/high/xhigh reasoning
+  ladder. The picker uses the friendly label “Muse Spark 1.3 Free”; the route
+  remains explicitly allowlisted and selectable through
+  curation without requiring an OpenCode API key. Updated 2026-09-03 11:20
+  America/Chicago by GPT-5.6.
+
 - **Antigravity OAuth now uses an operator-owned, fail-closed sign-in.** The
   router requires one matching Google Desktop-app client ID/secret pair,
   collects it through an ephemeral IPv4 loopback listener, and stores the pair

@@ -62,6 +62,20 @@ const OPENCODE_FREE_MODELS = Object.freeze({
       "The minimal/low/medium/high/xhigh ladder is that same record's `reasoning_options` " +
       "for this free id; Zen's /models endpoint advertises no effort control.",
   }),
+  "muse-spark-1.3-contributor-free": Object.freeze({
+    contextWindow: 1_048_576,
+    outputLimit: 131_072,
+    reasoningLevels: Object.freeze(["minimal", "low", "medium", "high", "xhigh"]),
+    requestProfile: "auto-tool-choice",
+    summary:
+      "Muse Spark 1.3 Free through OpenCode Zen's anonymous Responses route.",
+    contextNote:
+      "The 1,048,576-token window is OpenCode's own published figure for this exact free id " +
+      "in its current model catalog; Zen's /models endpoint publishes no context limits.",
+    reasoningNote:
+      "The minimal/low/medium/high/xhigh ladder is OpenCode's published reasoning-options " +
+      "record for this free id; Zen's /models endpoint advertises no effort control.",
+  }),
   "nemotron-3-ultra-free": Object.freeze({
     contextWindow: 1_000_000,
     outputLimit: 128_000,
@@ -267,7 +281,10 @@ const CURATION_ROUTES = Object.freeze({
     providers: Object.freeze(["opencode-free", "opencode-free-responses"]),
     protocols: Object.freeze(["Chat", "Responses"]),
     responsesProvider: "opencode-free-responses",
-    responsesModels: Object.freeze(["muse-spark-1.2-contributor-free"]),
+    responsesModels: Object.freeze([
+      "muse-spark-1.2-contributor-free",
+      "muse-spark-1.3-contributor-free",
+    ]),
     primaryModels: Object.freeze([
       "big-pickle",
       "deepseek-v4-flash-free",

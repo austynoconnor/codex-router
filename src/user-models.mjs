@@ -75,6 +75,10 @@ const METADATA_FIELDS = new Set([
 // and upstream id: the id remains the routing identity, and a reseller cannot
 // accidentally rename another provider's model with the same slug.
 const OFFICIAL_MODEL_DISPLAY_NAMES = new Map([
+  [
+    "opencode-free-responses/muse-spark-1.3-contributor-free",
+    "Muse Spark 1.3 Free",
+  ],
 ]);
 
 export function officialModelDisplayName(providerId, upstreamId) {
