@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- **Refreshed the native OpenAI catalog for GPT-6 Astra.** The managed
+  catalog capture now includes native `gpt-6-astra` with list visibility and
+  its supported reasoning levels, while preserving the existing GPT-5.6
+  default and router picker selections. Updated 2026-09-07 11:23
+  America/Chicago by GPT-5.6.
+
 - **Muse Spark 1.3 Free now receives the OpenCode search-tool repair.**
   OpenCode rejects Codex's `search_content_types` field on the `web_search`
   tool shape, while accepting it on the legacy `web_search_preview` shape.
