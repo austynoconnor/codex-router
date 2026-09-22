@@ -130,6 +130,51 @@ export function mergeNativeCatalogs(accountCatalog, bundledCatalog) {
   };
 }
 
+// OpenAI can publish a model before the installed Codex binary republishes its
+// account catalog. Keep the newly released GPT-6 Sol and Luna selectable while
+// that client-side catalog catches up, using the matching native metadata as
+// the transport shape. These are native slugs, so requests still go through
+// the authenticated OpenAI route rather than a router provider.
+const RELEASED_GPT6_VARIANTS = Object.freeze([
+  {
+    slug: "gpt-6-sol",
+    display_name: "GPT-6-Sol",
+    description: "Highly capable, lower-cost alternative to GPT-6 Astra.",
+    template: "gpt-5.6-sol",
+    priority: 2,
+  },
+  {
+    slug: "gpt-6-luna",
+    display_name: "GPT-6-Luna",
+    description: "Fast and cost-efficient GPT-6 model.",
+    template: "gpt-5.6-luna",
+    priority: 7,
+  },
+]);
+
+export function supplementReleasedNativeModels(catalog) {
+  if (!validNativeCatalog(catalog)) return catalog;
+  const models = [...catalog.models];
+  const bySlug = new Map(models.map((model) => [String(model.slug || ""), model]));
+  for (const release of RELEASED_GPT6_VARIANTS) {
+    if (bySlug.has(release.slug)) continue;
+    const template = bySlug.get(release.template);
+    if (!template) continue;
+    const model = {
+      ...template,
+      slug: release.slug,
+      display_name: release.display_name,
+      description: release.description,
+      priority: release.priority,
+      visibility: "list",
+      supported_in_api: true,
+    };
+    models.push(model);
+    bySlug.set(release.slug, model);
+  }
+  return { ...catalog, models };
+}
+
 function isEmptyNativeMetadata(value) {
   if (value === undefined || value === null) return true;
   if (typeof value === "string") return value.trim() === "";
@@ -265,7 +310,9 @@ function captureNative(cache) {
   } catch (error) {
     fallbackError = error;
   }
-  const parsed = mergeNativeCatalogs(account, fallback);
+  const parsed = supplementReleasedNativeModels(
+    mergeNativeCatalogs(account, fallback),
+  );
   if (!validNativeCatalog(parsed)) {
     const detail = accountError?.message || fallbackError?.message;
     throw new Error(

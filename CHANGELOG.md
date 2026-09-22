@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+- **Added GPT-6 Sol and GPT-6 Luna to native catalog capture.** The installed
+  Codex client can lag a public OpenAI model release, so catalog refresh now
+  supplements the account snapshot with `gpt-6-sol` and `gpt-6-luna` using the
+  corresponding native GPT-5.6 metadata shape. Updated 2026-09-22 by GPT-5.
+
+- **Show Daybreak Blue in the local Codex picker.** Changed the installed
+  merged catalog entry `gpt-daybreak-blue-latest` from hidden to listed at the
+  user's request. This local catalog override does not change the default model
+  or account access and can be replaced by a future catalog refresh.
+  Updated 2026-09-08 13:41 America/Chicago by GPT-6.
+
 - **Refreshed the native OpenAI catalog for GPT-6 Astra.** The managed
   catalog capture now includes native `gpt-6-astra` with list visibility and
   its supported reasoning levels, while preserving the existing GPT-5.6
