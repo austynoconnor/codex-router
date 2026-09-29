@@ -732,6 +732,22 @@ const NATIVE_UNSUPPORTED_PARAMS = Object.freeze([
   "truncation",
 ]);
 const NATIVE_STATELESS_REASONING_INCLUDE = "reasoning.encrypted_content";
+const NATIVE_RESPONSES_LITE_HEADER = "x-openai-internal-codex-responses-lite";
+
+// The current Codex backend requires full-turn reasoning context whenever the
+// Responses-Lite capability header is present. A desktop-app update can begin
+// sending that header before its request builder starts populating the new
+// field, so fill the field at the native forwarding boundary while preserving
+// any effort or summary values the client supplied.
+function normalizeNativeResponsesLiteReasoning(payload, request) {
+  const capability = String(request.headers[NATIVE_RESPONSES_LITE_HEADER] || "").trim();
+  if (!capability) return payload;
+  const reasoning = payload.reasoning;
+  payload.reasoning = reasoning && typeof reasoning === "object" && !Array.isArray(reasoning)
+    ? { ...reasoning, context: "all_turns" }
+    : { context: "all_turns" };
+  return payload;
+}
 
 /**
  * Make a generic Responses request acceptable to the native endpoint.
@@ -3708,6 +3724,7 @@ async function handleResponses(request, response, requestUrl) {
       }
     } else {
       const native = { ...payload };
+      normalizeNativeResponsesLiteReasoning(native, request);
       const substitutedCaller = callerBroughtNoUpstreamCredential(request);
       // An extended-window variant is the model it was derived from, published
       // under a second slug so the picker can offer a different context

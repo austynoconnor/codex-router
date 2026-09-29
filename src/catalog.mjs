@@ -144,6 +144,13 @@ const RELEASED_GPT6_VARIANTS = Object.freeze([
     priority: 2,
   },
   {
+    slug: "gpt-6.1-sol",
+    display_name: "GPT-6.1 Sol",
+    description: "Near-Astra performance for complex work at a lower cost.",
+    template: "gpt-6-astra",
+    priority: 3,
+  },
+  {
     slug: "gpt-6-luna",
     display_name: "GPT-6-Luna",
     description: "Fast and cost-efficient GPT-6 model.",

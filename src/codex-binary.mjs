@@ -110,13 +110,52 @@ export function requireCodexBinary() {
   return binary;
 }
 
+// The desktop app can carry a managed multi-agent object in config.toml while
+// newer Codex builds accept only a boolean for this legacy feature key. The
+// model/auth probes below must still work after an app update, so override the
+// stale value for those read-only probes instead of rewriting the operator's
+// config. Keeping this scoped to discovery and auth avoids changing normal
+// Codex requests or the user's saved multi-agent settings.
+const COMPATIBILITY_PROBE_ARGS = Object.freeze([
+  "-c",
+  "features.multi_agent_v2=false",
+]);
+
+export function codexProbeArgs(args) {
+  const values = Array.isArray(args) ? [...args] : [];
+  const probe = values[0] === "debug" || (
+    values[0] === "login" && values[1] === "status"
+  );
+  return probe ? [...COMPATIBILITY_PROBE_ARGS, ...values] : values;
+}
+
+function isLegacyMultiAgentParseError(error) {
+  const detail = [error?.message, error?.stdout, error?.stderr]
+    .filter(Boolean)
+    .join("\\n");
+  return /multi_agent_v2|FeatureToml|expected (?:a )?boolean|invalid type/i.test(detail);
+}
+
 export function runCodex(args, options = {}) {
-  const target = spawnableCommand(requireCodexBinary(), args);
-  return execFileSync(target.command, target.args, {
+  const binary = requireCodexBinary();
+  const baseOptions = {
     windowsHide: true,
-    ...target.options,
     ...options,
-  });
+  };
+  try {
+    const target = spawnableCommand(binary, args);
+    return execFileSync(target.command, target.args, {
+      ...baseOptions,
+      ...target.options,
+    });
+  } catch (error) {
+    if (!isLegacyMultiAgentParseError(error)) throw error;
+    const target = spawnableCommand(binary, codexProbeArgs(args));
+    return execFileSync(target.command, target.args, {
+      ...baseOptions,
+      ...target.options,
+    });
+  }
 }
 
 // The version tells catalog code whether a cached native capture came from
@@ -153,13 +192,19 @@ export function codexAuthStatus() {
     // Inside the try: a path this module refuses to hand to a shell is a probe
     // that could not run, which is the "unknown" this function exists to
     // report -- not an exception for every caller to learn to expect.
-    const target = spawnableCommand(binary, ["login", "status"]);
-    execFileSync(target.command, target.args, {
-      ...target.options,
+    const probeOptions = {
       timeout: 10_000,
       stdio: "ignore",
       windowsHide: true,
-    });
+    };
+    try {
+      const target = spawnableCommand(binary, ["login", "status"]);
+      execFileSync(target.command, target.args, { ...target.options, ...probeOptions });
+    } catch (firstError) {
+      if (!isLegacyMultiAgentParseError(firstError)) throw firstError;
+      const target = spawnableCommand(binary, codexProbeArgs(["login", "status"]));
+      execFileSync(target.command, target.args, { ...target.options, ...probeOptions });
+    }
     return { authenticated: true, reason: "authenticated", binary };
   } catch (error) {
     // A numeric status means Codex ran and reported a signed-out session.

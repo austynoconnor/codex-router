@@ -49,6 +49,24 @@ function remainingOperationMs(limit = Number.POSITIVE_INFINITY) {
 // whole readiness budget, so the query is killed and read as inconclusive.
 const RESTART_QUERY_TIMEOUT_MS = 5_000;
 
+const CATALOG_REFRESH_COMMANDS = new Set(["install", "start", "restart"]);
+
+async function refreshNativeCatalogBeforeStart(command) {
+  if (!CATALOG_REFRESH_COMMANDS.has(command)) return;
+  try {
+    const { refreshCatalog } = await import("./refresh-catalog.mjs");
+    await refreshCatalog();
+    console.error("Native model catalog refreshed before router service start.");
+  } catch (error) {
+    // A temporary upstream outage must not prevent the existing local router
+    // from starting. The catalog builder itself keeps the last good native
+    // capture when a refresh fails, and the service can still serve it.
+    console.error(
+      `Native model catalog refresh skipped: ${error instanceof Error ? error.message : String(error)}`,
+    );
+  }
+}
+
 export async function runServiceCommandUnlocked(
   command = "status",
   args = [command],
@@ -74,6 +92,7 @@ export async function runServiceCommandUnlocked(
       "The service operation deadline cannot preserve its platform and 300-second readiness allowances.",
     );
   }
+  await refreshNativeCatalogBeforeStart(command);
   const result = spawnSync(
     process.execPath,
     [path.join(SOURCE_ROOT, "src", script), ...args],

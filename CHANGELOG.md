@@ -2,6 +2,23 @@
 
 ## Unreleased
 
+- **Repair the updated Responses-Lite request contract.** Native requests
+  carrying Codex's Responses-Lite capability header now receive the required
+  `reasoning.context = "all_turns"` field at the router boundary, preserving
+  the client's effort and summary settings. This keeps newly surfaced native
+  models usable after the current desktop-app update. Updated 2026-09-29
+  14:16 America/Chicago by GPT-5.
+
+- **Restore automatic native model discovery and add GPT-6.1 Sol.** Native
+  catalog refreshes now run automatically before the router service starts,
+  restarts, or installs, while external provider entries remain governed by
+  the existing curated picker state. Codex discovery and login probes also
+  override the stale legacy `features.multi_agent_v2` object at probe time so
+  desktop-app updates cannot block refreshes. The catalog supplements the
+  newly released `gpt-6.1-sol` entry with the official GPT-6.1 Sol metadata
+  shape until the installed Codex client publishes it itself. Updated
+  2026-09-29 14:08 America/Chicago by GPT-5.
+
 - **Added GPT-6 Sol and GPT-6 Luna to native catalog capture.** The installed
   Codex client can lag a public OpenAI model release, so catalog refresh now
   supplements the account snapshot with `gpt-6-sol` and `gpt-6-luna` using the
