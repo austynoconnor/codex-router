@@ -236,10 +236,9 @@ function nativeCodexModels(
         ...(nativeBaseSlugs.has(model.slug) ? {} : { nativeClientManaged: false }),
         multiAgentVersion: model.multi_agent_version || "v1",
         subagentCertification: certificationBySlug.get(model.slug) || "unknown",
-        // Base native entries belong to Codex's own catalog.  A router picker
-        // overlay must not make them disappear; synthesized context variants
-        // remain router-managed and can still be switched off explicitly.
-        visible: nativeBaseSlugs.has(model.slug) || !hiddenModels.has(model.slug),
+        // Native base entries normally arrive visible, but an explicit picker
+        // hide is durable across catalog refreshes just like a routed model.
+        visible: !hiddenModels.has(model.slug),
         ...reasoningLevelField(model.supported_reasoning_levels),
       }));
   } catch {
@@ -2789,11 +2788,6 @@ async function handlePicker(action, value, flag) {
       }
       if (!(await knownModelSlug(value))) {
         throw new Error(`Unknown model slug: ${value}`);
-      }
-      if (nativeBaseSlugs.has(String(value))) {
-        throw new Error(
-          "Native Codex model visibility is managed by Codex and is not part of the router picker overlay.",
-        );
       }
       setModelVisible(value, flag === "show");
     } else if (action === "provider") {

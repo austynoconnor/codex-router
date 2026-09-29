@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- **Hide the requested native models from the Codex picker.** Native picker
+  visibility now accepts durable per-model hide decisions, so the catalog keeps
+  `gpt-6-sol`, `gpt-5.6-terra`, `gpt-5.5`, `gpt-5.6-sol`, and
+  `gpt-5.6-sol-1m` hidden across automatic refreshes and service restarts.
+  Updated 2026-09-29 14:31 America/Chicago by GPT-5.
+
 - **Repair the updated Responses-Lite request contract.** Native requests
   carrying Codex's Responses-Lite capability header now receive the required
   `reasoning.context = "all_turns"` field at the router boundary, preserving

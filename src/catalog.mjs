@@ -987,13 +987,18 @@ export function buildLoginFreeCatalog(native, routedModelsList) {
 }
 
 // A signed-in Codex catalog contains two policy domains: the account's native
-// entries and the router's routed entries. Keep the router overlay off native
-// base slugs so stale external picker state cannot erase Codex's original
-// picker. Login-free mode deliberately aliases external models onto those
-// slugs, so it is the one mode where the overlay applies to all entries.
-export function effectivePickerHiddenModels(hiddenModels, nativeBaseSlugs, { loginFree = false } = {}) {
+// entries and the router's routed entries. Stale external picker state stays
+// off native base slugs by default; an explicit nativeVisibility decision is
+// used only for deliberate per-model native hide/show actions. Login-free mode
+// deliberately aliases external models onto native slugs, so its overlay
+// applies to every entry.
+export function effectivePickerHiddenModels(
+  hiddenModels,
+  nativeBaseSlugs,
+  { loginFree = false, nativeVisibility = false } = {},
+) {
   const hidden = new Set([...hiddenModels || []].map((slug) => String(slug)));
-  if (loginFree) return hidden;
+  if (loginFree || nativeVisibility) return hidden;
   const native = new Set([...nativeBaseSlugs || []].map((slug) => String(slug)));
   return new Set([...hidden].filter((slug) => !native.has(slug)));
 }
@@ -1063,7 +1068,7 @@ function main() {
   const effectiveHiddenModels = effectivePickerHiddenModels(
     hiddenModels,
     nativeBaseSlugs,
-    { loginFree },
+    { loginFree, nativeVisibility: true },
   );
   const native = {
     ...captured,
@@ -1147,7 +1152,7 @@ function main() {
         const selected = pickerState.hasExplicitVisibility
           ? visibleModels.has(policySlug)
           : !hidden;
-        return routerManaged && (hidden || !selected)
+        return hidden || (routerManaged && !selected)
           ? { ...model, visibility: "hide" }
           : model;
       }),
