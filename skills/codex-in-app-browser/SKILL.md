@@ -24,6 +24,9 @@ Use only its documented APIs and preserve the REPL bindings between calls.
 Do not bootstrap the legacy browser client inside this runtime.
 If combined inventory times out, use the direct in-app browser entry point
 once. After initialization, prefer browser-only inventories for browser tasks.
+When a binding call fails, its assigned variable is unavailable. Inspect the
+error and recover once with a fresh tab if authorized; do not call a variable
+whose initialization failed.
 
 ## Legacy node runtime
 

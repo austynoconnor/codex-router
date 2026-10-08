@@ -20,7 +20,11 @@
   its prompt dropped from about 120k to 33k tokens. Browser skills now cover
   direct browser entry points after combined inventory timeouts. See
   `docs/routed-tool-profiles.md` for configuration and limits.
-  Updated 2026-10-07 23:24 America/Chicago by GPT-6.1 Sol (Codex).
+  Added browser binding failure guidance after the live Mirai test attempted
+  to reuse a variable whose tab was owned by another Codex browser session.
+  Recovering a read uses a separate authorized tab and preserves the original
+  session's ownership.
+  Updated 2026-10-07 23:34 America/Chicago by GPT-6.1 Sol (Codex).
 
 - **Hide the requested native models from the Codex picker.** Native picker
   visibility now accepts durable per-model hide decisions, so the catalog keeps

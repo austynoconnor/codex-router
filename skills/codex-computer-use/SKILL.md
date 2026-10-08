@@ -30,6 +30,12 @@ the APIs documented by the tool. Keep bindings in the provided REPL. Do not
 import `@oai/sky` into this runtime. If its instructions disable native desktop
 APIs, use its supported browser APIs for browser tasks.
 
+A failed `getTab` or `createBrowserTab` call did not create its assigned
+binding. Do not call that variable afterward. If the requested tab belongs to
+another browser session, preserve that session's ownership. For an authorized
+read of a known URL, create a separate tab at that same URL once and inspect
+its returned state. If that fails, report the exact blocker and stop.
+
 ## Desktop tasks with the legacy node runtime
 
 Use the following workflow only when `mcp__node_repl__js` is offered. The
