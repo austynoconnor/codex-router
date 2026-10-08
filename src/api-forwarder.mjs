@@ -609,6 +609,8 @@ function normalizeBody(buffer, contentType, route) {
     MODEL_BY_GATEWAY_ID.get(requestedModel.replace(/^responses\//, "")) ||
     MODEL_BY_GATEWAY_ID.get(requestedModel);
   const provider = model && providerForModel(model);
+  // Codex access-program selection is not part of Anthropic's Messages schema.
+  if (provider?.protocol === "anthropic") delete payload.access_programs;
   if (!model || provider?.kind !== "openai-compatible") {
     const error = new Error(`Unknown API gateway model: ${String(payload.model || "missing")}`);
     error.status = 400;

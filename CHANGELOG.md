@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- **2026-10-08 16:06 CDT — GPT-6.1 Sol:** Strip Codex Desktop's
+  `access_programs` field at the Anthropic Messages forwarding boundary. The
+  Anthropic API rejects this Codex-only field with HTTP 400, preventing Opus
+  4.5 requests despite valid credentials. Other provider protocols retain their
+  existing request fields. Extended the real LiteLLM integration regression
+  check to send this field and verify that it never reaches Anthropic.
+
 - **Repair local Mirai's Codex browser tool integration.** The installed Mirai
   provider now uses the Chat Completions adapter, which runs the existing
   namespace relay instead of forwarding unsupported namespace/custom Responses

@@ -142,6 +142,7 @@ test(
         body: JSON.stringify({
           model: "anthropic-api/claude-opus-4.8",
           input: "Reply with the repository marker.",
+          access_programs: ["desktop-regression-check"],
           reasoning: { effort: "high", summary: "auto" },
           stream: false,
         }),
@@ -155,6 +156,7 @@ test(
       assert.equal(received.headers.authorization, undefined);
       assert.equal(received.headers["anthropic-version"], "2023-06-01");
       assert.equal(received.body.model, "claude-opus-4-8");
+      assert.equal(received.body.access_programs, undefined);
       assert.deepEqual(received.body.thinking, { type: "adaptive" });
       assert.deepEqual(received.body.output_config, { effort: "high" });
     } finally {
