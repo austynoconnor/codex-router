@@ -215,9 +215,9 @@ function withRequiredAppTools(tools, required) {
 export function chatProviderToolSurface(
   tools,
   providerId,
-  { input, toolChoice } = {},
+  { input, toolChoice, mergeDeferredAppTools = true } = {},
 ) {
-  const merged = mergeCodexAppTools(tools);
+  const merged = mergeDeferredAppTools ? mergeCodexAppTools(tools) : { tools };
   if (providerId !== "groq") return flattenNamespaceTools(merged.tools);
 
   // Groq has no OpenCode-style length bound, but it still needs deterministic

@@ -1,11 +1,33 @@
 ---
 name: codex-in-app-browser
-description: Drive the Codex in-app browser (open, navigate, click, type, screenshot, read page state) through the app's own node_repl runtime. Use when the session uses a custom (non-OpenAI) model, for example deepseek-v4-flash or mimo-v2.5, and the user asks to use the in-app browser, open or navigate a page in it, test a local app in a browser, or click, type, or take a screenshot in the Codex browser panel.
+description: Drive the Codex in-app browser through its provided CUA or legacy node_repl runtime. Use when a custom (non-OpenAI) model session needs to open, navigate, inspect, click, type, or take a screenshot in the Codex browser panel.
 ---
 
 # Codex In-App Browser
 
-The tool is `mcp__node_repl__js`. It is available in this session.
+Choose the runtime from the tools actually offered in this session.
+
+## Current browser tool
+
+If `mcp__cua_repl__js` is offered, read its tool instructions and use it.
+To open a requested URL visibly in the Codex browser, the first invocation
+may contain exactly one entry-point call:
+
+```js
+let tab = await cua.createBrowserTab("iab", url, { visible: true });
+```
+
+Use the user's actual URL. For an existing tab, use the documented `getTab`
+entry point; for an inventory, use `await cua.getState();` as the entire first
+invocation. Read its returned documentation and state before interacting.
+Use only its documented APIs and preserve the REPL bindings between calls.
+Do not bootstrap the legacy browser client inside this runtime.
+If combined inventory times out, use the direct in-app browser entry point
+once. After initialization, prefer browser-only inventories for browser tasks.
+
+## Legacy node runtime
+
+Use the remaining instructions only when `mcp__node_repl__js` is offered.
 
 ## First: read the official skill
 
@@ -47,5 +69,6 @@ Read the complete documentation output before interacting with the page.
 
 ## If the tool is missing
 
-Stop and report that `mcp__node_repl__js` is not in the tool list. Do not
-build workarounds.
+If neither supported browser tool is offered, report the missing capability
+and end the turn. Do not repeatedly search for installed runtimes, start a
+separate node process, or construct a browser driver from shell commands.

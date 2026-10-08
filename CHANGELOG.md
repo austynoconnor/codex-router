@@ -2,6 +2,26 @@
 
 ## Unreleased
 
+- **Repair local Mirai's Codex browser tool integration.** The installed Mirai
+  provider now uses the Chat Completions adapter, which runs the existing
+  namespace relay instead of forwarding unsupported namespace/custom Responses
+  definitions to llama-server. Updated the companion browser and computer-use
+  skills to select the current `cua_repl` or legacy `node_repl` from the actual
+  tool list and stop on missing capabilities instead of probing shell drivers.
+  Clarified that a missing-tool blocker may end a turn; keeping a turn active
+  is not a reason to manufacture irrelevant shell calls.
+  The provider setting is machine-local, not a checked-in provider default.
+  Added optional model-scoped routed tool profiles for explicit MCP identities
+  on desktop clients that omit canonical namespace metadata. Profiles can
+  limit unrelated MCP definitions, skip duplicate deferred app snapshots, and
+  set a bounded local inference stream allowance while retaining ordinary
+  tools, referenced history, and forced choices. Unconfigured models keep their
+  existing behavior. The Mirai installation uses a browser/app/search profile;
+  its prompt dropped from about 120k to 33k tokens. Browser skills now cover
+  direct browser entry points after combined inventory timeouts. See
+  `docs/routed-tool-profiles.md` for configuration and limits.
+  Updated 2026-10-07 23:24 America/Chicago by GPT-6.1 Sol (Codex).
+
 - **Hide the requested native models from the Codex picker.** Native picker
   visibility now accepts durable per-model hide decisions, so the catalog keeps
   `gpt-6-sol`, `gpt-5.6-terra`, `gpt-5.5`, `gpt-5.6-sol`, and

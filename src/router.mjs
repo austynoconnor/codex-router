@@ -61,6 +61,7 @@ import {
 } from "./zai-responses-compat.mjs";
 import { translatedToolMessageCompatTransform } from "./deepseek-tool-message-compat.mjs";
 import { exactRouteProbeRequested } from "./exact-route-probe.mjs";
+import { applyRoutedToolProfile, readRoutedToolProfile } from "./routed-tool-profile.mjs";
 import {
   MERGED_CATALOG_PATH,
   NATIVE_CATALOG_PATH,
@@ -2900,6 +2901,8 @@ function observeSubagentOutcome(request, route, status, options = {}) {
 // `agedInput`. The tool list is a local, and the input array is copied before
 // anything rewrites it.
 async function buildRoutedRequest({ request, payload, route, agedInput }) {
+  const toolProfile = readRoutedToolProfile(route.slug);
+  if (toolProfile) payload = applyRoutedToolProfile({ ...payload, input: agedInput }, toolProfile);
   const searchCompatibility = routedSearchCompatibility(payload, route);
   payload = searchCompatibility.payload;
   let namespacesFlattened = false;
@@ -2999,6 +3002,7 @@ async function buildRoutedRequest({ request, payload, route, agedInput }) {
     const flattened = chatProviderToolSurface(tools, provider?.id, {
       input,
       toolChoice: payload.tool_choice,
+      mergeDeferredAppTools: toolProfile?.mergeDeferredAppTools,
     });
     namespacesFlattened = flattened.flattened;
     flattenedNamespaces = flattened.namespaces;
@@ -4002,7 +4006,7 @@ async function handleResponses(request, response, requestUrl) {
         route && !directResponses && EMPTY_COMPLETION_RETRY
           ? new EmptyCompletionGuard(contentType, {
               maxPreludeBytes: EMPTY_COMPLETION_PRELUDE_BYTES,
-              maxPreludeMs: EMPTY_COMPLETION_PRELUDE_MS,
+              maxPreludeMs: readRoutedToolProfile(route.slug)?.streamPreludeMs ?? EMPTY_COMPLETION_PRELUDE_MS,
             })
           : undefined;
       if (guard) {

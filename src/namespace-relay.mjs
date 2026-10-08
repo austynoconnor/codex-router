@@ -640,7 +640,7 @@ function trackedStateBytes(state) {
 // Audit the complete JSON grammar before parsing, compare decoded key values
 // so spellings such as `"name"` and `"\u006eame"` collide, and reject numeric
 // values whose parse/stringify semantics are known to be lossy.
-function jsonIsUnambiguousForRewrite(text, { allowLossyNumbers = false } = {}) {
+export function jsonIsUnambiguousForRewrite(text, { allowLossyNumbers = false } = {}) {
   if (typeof text !== "string") return false;
   let offset = 0;
 
